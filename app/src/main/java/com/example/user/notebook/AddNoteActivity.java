@@ -35,19 +35,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 final String title = etTitle.getText().toString().trim();
                 final String body = etBody.getText().toString().trim();
                 note = new Note(title, body);
-
-                try {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noteDatabase.noteDAO().insertNote(note);
-                        }
-                    }).start();
-                    Toast.makeText(AddNoteActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                }
-
-//                addNoteToDatabase(note);
+                addNoteToDatabase(note);
                 MainActivity.notes.add(note);
                 etTitle.setText("");
                 etBody.setText("");
@@ -57,11 +45,12 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void addNoteToDatabase(final Note note) {
-//        noteDatabase = Room.databaseBuilder(getApplicationContext(),
-//                NoteDatabase.class, DATABASE_NAME)
-//                .fallbackToDestructiveMigration()
-//                .build();
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noteDatabase.noteDAO().insertNote(note);
+            }
+        }).start();
     }
 
     private void initView() {

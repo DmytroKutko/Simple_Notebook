@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner spinner;
     String[] items;
     RecyclerView rvNotes;
-    RecyclerView.Adapter adapter;
+    NoteAdapter adapter;
     RecyclerView.LayoutManager manager;
     FloatingActionButton fabAdd;
     private static final String DATABASE_NAME = "notes_db";
@@ -41,30 +41,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        noteDatabase = Room.databaseBuilder(getApplicationContext(),
-                NoteDatabase.class, DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-                .build();
-
         notes = new ArrayList<>();
 
-        // Add all notes from database
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                notes.addAll(noteDatabase.noteDAO().getAllNotes());
-            }
-        }).start();
-
-
-        // Test !!!
-        notes.add(new Note("Title1", "Some text"));
-        sleep();
-        notes.add(new Note("Super Title", "Other text"));
-        sleep();
-        notes.add(new Note("Title title title", "New note text"));
-        // end Test
-
+        initDatabase();
         initSpinner();
         initRecyclerView();
 
@@ -74,6 +53,35 @@ public class MainActivity extends AppCompatActivity {
     private void initListener() {
         spinnerListener();
         fabAddListener();
+        adapterClickListener();
+    }
+
+    private void adapterClickListener() {
+        adapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                openDialog(position);
+            }
+        });
+    }
+
+    private void openDialog(int position) {
+        NoteDialog dialog = new NoteDialog(notes.get(position).getUnixTime());
+        dialog.show(getSupportFragmentManager(), "note dialog");
+    }
+
+    private void initDatabase() {
+        noteDatabase = Room.databaseBuilder(getApplicationContext(),
+                NoteDatabase.class, DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build();
+        // Get all notes from database
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                notes.addAll(noteDatabase.noteDAO().getAllNotes());
+            }
+        }).start();
     }
 
     private void fabAddListener() {
@@ -90,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Sorted by: " + items[position], Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Sorted by: " + items[position], Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -117,15 +125,5 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-
-    }
-
-    //Sleep 10 millis
-    private void sleep() {
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

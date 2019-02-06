@@ -16,17 +16,38 @@ import java.util.ArrayList;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     private ArrayList<Note> notes;
+    private OnItemClickListener clickListener;
 
-    public static class NoteViewHolder extends RecyclerView.ViewHolder {
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        clickListener = listener;
+    }
+
+    public class NoteViewHolder extends RecyclerView.ViewHolder {
 
         public ImageButton ibDelete;
         public TextView tvTitle, tvBody;
 
-        public NoteViewHolder(@NonNull View itemView) {
+        public NoteViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             ibDelete = itemView.findViewById(R.id.ibDelete);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvBody = itemView.findViewById(R.id.tvBody);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -39,7 +60,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.note_item, viewGroup, false);
-        NoteViewHolder noteViewHolder = new NoteViewHolder(view);
+        NoteViewHolder noteViewHolder = new NoteViewHolder(view, clickListener);
         return noteViewHolder;
     }
 
