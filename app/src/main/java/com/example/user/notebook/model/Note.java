@@ -15,13 +15,6 @@ public class Note {
 
     private long unixTime;
 
-    public Note(Note note) {
-        this.id = note.getId();
-        this.title = note.getTitle();
-        this.body = note.getBody();
-        this.unixTime = note.unixTime;
-    }
-
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
