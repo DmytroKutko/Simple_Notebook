@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.user.notebook.adapter.NoteAdapter;
 import com.example.user.notebook.database.NoteDatabase;
+import com.example.user.notebook.dialog.NoteDialog;
 import com.example.user.notebook.model.Note;
 
 import java.util.ArrayList;
@@ -62,7 +63,24 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(int position) {
                 openDialog(position);
             }
+
+            @Override
+            public void onDeleteClick(int position) {
+                Note note = notes.get(position);
+                deleteItem(position, note);
+            }
         });
+    }
+
+    private void deleteItem(final int position, final Note note) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                noteDatabase.noteDAO().deleteNote(note);
+            }
+        }).start();
+        notes.remove(position);
+        adapter.notifyItemRemoved(position);
     }
 
     private void openDialog(int position) {

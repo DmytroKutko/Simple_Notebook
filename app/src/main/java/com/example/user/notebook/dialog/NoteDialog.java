@@ -1,4 +1,4 @@
-package com.example.user.notebook;
+package com.example.user.notebook.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
