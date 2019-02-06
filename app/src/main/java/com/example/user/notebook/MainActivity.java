@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.user.notebook.adapter.NoteAdapter;
 import com.example.user.notebook.database.NoteDatabase;
@@ -19,6 +18,8 @@ import com.example.user.notebook.dialog.NoteDialog;
 import com.example.user.notebook.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,7 +117,43 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(MainActivity.this, "Sorted by: " + items[position], Toast.LENGTH_SHORT).show();
+
+                if (notes.size() > 0){
+
+                    switch (items[position]){
+                        case "Title":
+                            Collections.sort(notes, new Comparator<Note>() {
+                                @Override
+                                public int compare(Note o1, Note o2) {
+                                    return o1.getTitle().compareTo(o2.getTitle());
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+                            break;
+
+                            case "Body":
+                            Collections.sort(notes, new Comparator<Note>() {
+                                @Override
+                                public int compare(Note o1, Note o2) {
+                                    return o1.getBody().compareTo(o2.getBody());
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+                            break;
+
+                            case "Time":
+                            Collections.sort(notes, new Comparator<Note>() {
+                                @Override
+                                public int compare(Note o1, Note o2) {
+                                    return Double.compare(o1.getUnixTime(), o2.getUnixTime());
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+                            break;
+
+                    }
+
+                }
             }
 
             @Override
