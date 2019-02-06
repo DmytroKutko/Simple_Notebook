@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.user.notebook.adapter.NoteAdapter;
 import com.example.user.notebook.database.NoteDatabase;
@@ -150,12 +151,11 @@ public class MainActivity extends AppCompatActivity {
                             });
                             adapter.notifyDataSetChanged();
                             break;
-
                     }
-
+                } else {
+                    Toast.makeText(MainActivity.this, "List in empty !!!", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
